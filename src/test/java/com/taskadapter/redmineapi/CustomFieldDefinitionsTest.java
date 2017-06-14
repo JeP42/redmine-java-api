@@ -1,16 +1,17 @@
 package com.taskadapter.redmineapi;
 
-import com.taskadapter.redmineapi.bean.CustomFieldDefinition;
-import com.taskadapter.redmineapi.internal.RedmineJSONParser;
-import com.taskadapter.redmineapi.internal.json.JsonInput;
+import static org.assertj.core.api.Assertions.assertThat;
+
 import java.io.IOException;
+import java.util.List;
+
+import org.json.JSONException;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.util.List;
-import org.json.JSONException;
-
-import static org.fest.assertions.Assertions.assertThat;
+import com.taskadapter.redmineapi.bean.CustomFieldDefinition;
+import com.taskadapter.redmineapi.internal.RedmineJSONParser;
+import com.taskadapter.redmineapi.internal.json.JsonInput;
 
 /**
  * The tests expect some manual (one-time) setup in the Redmine server because
@@ -19,7 +20,7 @@ import static org.fest.assertions.Assertions.assertThat;
  * Exactly 3 custom fields must be configured:
  *   - id: 1, customized_type: issue, name: my_custom_1, type: string
  *   - id: 2, customized_type: issue, name: custom_boolean_1, type: bool
- *   - id: 3, customized_type: issue, name: custom_multi_list, type: list, 
+ *   - id: 3, customized_type: issue, name: custom_multi_list, type: list,
  *            multiple: true, possible_values: V1, V2, V3, default: V2
  */
 public class CustomFieldDefinitionsTest {

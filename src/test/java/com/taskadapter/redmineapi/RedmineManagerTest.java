@@ -1,11 +1,13 @@
 package com.taskadapter.redmineapi;
 
-import org.junit.Test;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
 
-import static org.fest.assertions.Assertions.assertThat;
+import org.junit.Test;
+
+
 
 /**
  * Integration tests for RedmineManager.

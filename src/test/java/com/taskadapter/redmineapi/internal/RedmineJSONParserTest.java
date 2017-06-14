@@ -1,6 +1,6 @@
 package com.taskadapter.redmineapi.internal;
 
-import static org.fest.assertions.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -36,9 +36,9 @@ import org.json.JSONException;
 
 /**
  * Redmine JSON parser tests.
- * 
+ *
  * @author maxkar
- * 
+ *
  */
 public class RedmineJSONParserTest {
 	private static final String FILE_EMPTY_ISSUES = "issue/issues_empty_list.json";
@@ -425,7 +425,7 @@ public class RedmineJSONParserTest {
 		Project version = RedmineJSONParser
 			.parseProject(RedmineJSONParser.getResponseSingleObject(json,
 				"version"));
-	
+
 		Assert.assertEquals(version.getCustomFields().size(), 2);
 		String expectedCustomeFieldValue = "Should have a value";
 		Assert.assertEquals(expectedCustomeFieldValue, version

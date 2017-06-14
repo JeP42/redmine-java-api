@@ -1,5 +1,35 @@
 package com.taskadapter.redmineapi.internal;
 
+import java.io.InputStream;
+import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.http.HttpEntityEnclosingRequest;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.entity.AbstractHttpEntity;
+import org.apache.http.entity.InputStreamEntity;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONWriter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.taskadapter.redmineapi.NotFoundException;
 import com.taskadapter.redmineapi.RedmineAuthenticationException;
 import com.taskadapter.redmineapi.RedmineException;
@@ -38,35 +68,6 @@ import com.taskadapter.redmineapi.internal.comm.redmine.RedmineErrorHandler;
 import com.taskadapter.redmineapi.internal.json.JsonInput;
 import com.taskadapter.redmineapi.internal.json.JsonObjectParser;
 import com.taskadapter.redmineapi.internal.json.JsonObjectWriter;
-import org.apache.http.HttpEntityEnclosingRequest;
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpDelete;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.entity.AbstractHttpEntity;
-import org.apache.http.entity.InputStreamEntity;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.message.BasicNameValuePair;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONWriter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.InputStream;
-import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public final class Transport {
 	private static final Map<Class<?>, EntityConfig<?>> OBJECT_CONFIGS = new HashMap<Class<?>, EntityConfig<?>>();
@@ -200,7 +201,7 @@ public final class Transport {
 
 	/**
 	 * Performs an "add object" request.
-	 * 
+	 *
 	 * @param object
 	 *            object to use.
 	 * @param params
@@ -226,7 +227,7 @@ public final class Transport {
 
 	/**
 	 * Performs an "add child object" request.
-	 * 
+	 *
 	 * @param parentClass
 	 *            parent object id.
 	 * @param object
@@ -254,7 +255,7 @@ public final class Transport {
 	/*
 	 * note: This method cannot return the updated object from Redmine because
 	 * the server does not provide any XML in response.
-	 * 
+	 *
 	 * @since 1.8.0
 	 */
 	public <T extends Identifiable> void updateObject(T obj,
@@ -276,7 +277,7 @@ public final class Transport {
 
 	/**
 	 * Performs "delete child Id" request.
-	 * 
+	 *
 	 * @param parentClass
 	 *            parent object id.
 	 * @param object
@@ -295,7 +296,7 @@ public final class Transport {
 
 	/**
 	 * Deletes an object.
-	 * 
+	 *
 	 * @param classs
 	 *            object class.
 	 * @param id
@@ -336,7 +337,7 @@ public final class Transport {
 
 	/**
 	 * Downloads redmine content.
-	 * 
+	 *
 	 * @param uri
 	 *            target uri.
 	 * @param handler
@@ -357,17 +358,18 @@ public final class Transport {
 
 	/**
 	 * UPloads content on a server.
-	 * 
+	 *
 	 * @param content
 	 *            content stream.
+	 * @param contentLength
 	 * @return uploaded item token.
 	 * @throws RedmineException
 	 *             if something goes wrong.
 	 */
-	public String upload(InputStream content) throws RedmineException {
+	public String upload(InputStream content, long contentLength) throws RedmineException {
 		final URI uploadURI = getURIConfigurator().getUploadURI();
 		final HttpPost request = new HttpPost(uploadURI);
-		final AbstractHttpEntity entity = new InputStreamEntity(content, -1);
+		final AbstractHttpEntity entity = new InputStreamEntity(content, contentLength);
 		/* Content type required by a Redmine */
 		entity.setContentType("application/octet-stream");
 		request.setEntity(entity);
@@ -402,7 +404,7 @@ public final class Transport {
 	 * Returns all objects found using the provided parameters.
 	 * This method IGNORES "limit" and "offset" parameters and handles paging AUTOMATICALLY for you.
 	 * Please use getObjectsListNoPaging() method if you want to control paging yourself with "limit" and "offset" parameters.
-	 * 
+	 *
 	 * @return objects list, never NULL
 	 *
 	 * @see #getObjectsListNoPaging(Class, Collection)
@@ -492,7 +494,7 @@ public final class Transport {
 
 	/**
 	 * Delivers a list of a child entries.
-	 * 
+	 *
 	 * @param classs
 	 *            target class.
 	 */
@@ -535,7 +537,7 @@ public final class Transport {
 		}
 		this.objectsPerPage = pageSize;
 	}
-	
+
 	public void addUserToGroup(int userId, int groupId) throws RedmineException {
 		logger.debug("adding user " + userId + " to group " + groupId + "...");
 		URI uri = getURIConfigurator().getChildObjectsURI(Group.class, Integer.toString(groupId), User.class);

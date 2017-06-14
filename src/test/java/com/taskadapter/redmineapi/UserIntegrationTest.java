@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.fest.assertions.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -135,7 +135,7 @@ public class UserIntegrationTest {
             }
         }
     }
-    
+
     @Test
     public void testCreateUserWithAuthSource() throws RedmineException {
         User createdUser = null;
@@ -145,8 +145,8 @@ public class UserIntegrationTest {
             createdUser = userManager.createUser(userToCreate);
 
             assertNotNull("checking that a non-null user is returned", createdUser);
-            
-//            Redmine doesn't return it, so let's consider a non-exceptional return as success for now. 
+
+//            Redmine doesn't return it, so let's consider a non-exceptional return as success for now.
 //            assertNotNull("checking that a non-null auth_source_id is returned", createdUser.getAuthSourceId());
 //            assertEquals(1, createdUser.getAuthSourceId().intValue());
         } finally {
